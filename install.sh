@@ -115,6 +115,26 @@ EOF
     echo "delete_ufw_rules.sh 脚本创建完成！"
 }
 
+# 显示 UFW 配置使用说明
+show_ufw_usage() {
+    echo
+    echo "========================== 使用提示 =========================="
+    echo "UFW 防火墙配置完成！如果尚未启用，请按照以下步骤操作："
+    echo
+    echo "1. 默认允许 SSH 端口（22）："
+    echo "   sudo ufw allow ssh"
+    echo
+    echo "2. 如果更改过 SSH 端口，请放行新的端口（例如 2222）："
+    echo "   sudo ufw allow <你更改的端口>"
+    echo
+    echo "3. 启用 UFW 防火墙："
+    echo "   sudo ufw enable"
+    echo "4. 启用别名配置: "
+    echo " 刷新并启用别名：source ~/.bashrc "
+    echo "============================================================="
+    echo
+}
+
 # 主安装流程
 main() {
     echo "正在安装和配置必要内容..."
@@ -124,11 +144,14 @@ main() {
 
     echo "配置别名..."
     script_dir=$(pwd)
-    add_alias clea "bash $script_dir/cleaner.sh"
+    add_alias clea "bash $script_dir/cleaner.sh"  
     add_alias ufw "bash $script_dir/delete_ufw_rules.sh"
 
     echo "所有操作完成！请运行以下命令使别名生效："
     echo "source ~/.bashrc"
+
+    # 显示 UFW 使用提示
+    show_ufw_usage
 }
 
 main
