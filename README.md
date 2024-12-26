@@ -1,4 +1,6 @@
-# 📄 使用方法
+# 一键脚本
+
+## 📄 使用方法
 
 > 直接运行以下命令即可下载并执行安装脚本：
 
@@ -16,5 +18,9 @@ curl -L https://raw.githubusercontent.com/SeraphinaDawn/123/main/install.sh -o i
 
 
 
-📌 注意事项
-请确保以 root 用户或通过 sudo 权限运行脚本。
+## 📌 注意事项
+
+脚本下载命令已经配置了权限,下载后请在`root`用户下运行
+
+
+
