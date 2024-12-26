@@ -129,8 +129,7 @@ show_ufw_usage() {
     echo
     echo "3. 启用 UFW 防火墙："
     echo "   sudo ufw enable"
-    echo "4. 启用别名配置: "
-    echo " 刷新并启用别名：source ~/.bashrc "
+    echo
     echo "============================================================="
     echo
 }
@@ -144,7 +143,7 @@ main() {
 
     echo "配置别名..."
     script_dir=$(pwd)
-    add_alias clea "bash $script_dir/cleaner.sh"  
+    add_alias clea "bash $script_dir/cleaner.sh"
     add_alias ufw "bash $script_dir/delete_ufw_rules.sh"
 
     echo "所有操作完成！请运行以下命令使别名生效："
