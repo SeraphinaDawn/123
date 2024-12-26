@@ -91,25 +91,34 @@ if ! command -v ufw &> /dev/null; then
     exit 1
 fi
 
+# 显示当前的 UFW 规则
 echo "当前的 UFW 规则："
 sudo ufw status numbered
 
-read -p "请输入要删除的规则编号（用空格分隔，例如：1 3 5）： " rule_numbers
-for rule in $rule_numbers; do
-    if sudo ufw status numbered | grep -q "\[$rule\]"; then
-        echo "正在删除规则编号 [$rule]..."
-        sudo ufw delete $rule
-    else
-        echo "规则编号 [$rule] 不存在，跳过..."
-    fi
-done
+# 提示用户输入需要删除的端口号
+echo
+read -p "请输入要删除的端口号（例如：80）： " port_number
 
-echo "所有选择的规则已删除。"
+# 检查端口是否存在于 UFW 规则中
+if sudo ufw status numbered | grep -q "\b$port_number\b"; then
+    echo "检测到端口 [$port_number] 的规则，正在删除..."
+    
+    # 遍历所有匹配的规则编号并删除
+    while sudo ufw status numbered | grep -q "\b$port_number\b"; do
+        rule_number=$(sudo ufw status numbered | grep "\b$port_number\b" | awk -F'[][]' '{print $2}' | head -n 1)
+        if [[ -n $rule_number ]]; then
+            echo "正在删除规则编号 [$rule_number]..."
+            sudo ufw delete "$rule_number"
+        else
+            echo "未找到更多规则，停止删除。"
+            break
+        fi
+    done
+    echo "所有与端口 [$port_number] 相关的规则已删除！"
+else
+    echo "未检测到与端口 [$port_number] 相关的规则，无需删除。"
+fi
 
-echo "启用 ufw 防火墙时请记得开放 SSH 端口！"
-echo "例如："
-echo "  sudo ufw allow ssh"
-echo "  sudo ufw enable"
 EOF
     chmod +x delete_ufw_rules.sh
     echo "delete_ufw_rules.sh 脚本创建完成！"
