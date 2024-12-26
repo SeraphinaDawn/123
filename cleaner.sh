@@ -62,3 +62,10 @@ released=$(echo "$before $after" | awk '{printf "%.2f", ($1 - $2)/1024}')
 echo
 echo "系统清理完成！"
 echo "总共释放磁盘空间：${released} MB"
+
+
+# 添加别名到 bashrc
+if ! grep -q "alias clea=" ~/.bashrc; then
+  echo "alias clea='bash $(pwd)/cleaner.sh'" >> ~/.bashrc
+  echo "快捷别名 'clea' 已添加！请重新加载 shell 或输入 source ~/.bashrc"
+fi

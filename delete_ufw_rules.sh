@@ -31,3 +31,11 @@ sudo ufw status numbered
 echo
 read -n 1 -s -r -p "按任意键退出脚本..."
 echo
+
+
+
+# 添加别名到 bashrc
+if ! grep -q "alias ufw=" ~/.bashrc; then
+  echo "alias ufw='bash $(pwd)/delete_ufw_rules.sh'" >> ~/.bashrc
+  echo "快捷别名 'ufw' 已添加！请重新加载 shell 或输入 source ~/.bashrc"
+fi
