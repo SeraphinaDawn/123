@@ -1,5 +1,6 @@
-#📄 使用方法
-###直接运行以下命令即可下载并执行安装脚本：
+📄 使用方法
+
+直接运行以下命令即可下载并执行安装脚本：
 ```bash
 curl -L https://raw.githubusercontent.com/SeraphinaDawn/123/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh    
 ```
