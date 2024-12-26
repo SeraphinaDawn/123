@@ -8,7 +8,7 @@
 
 ## 📄 使用方法
 
-### 地址一👇
+### 地址一👇GitHub
 
 > 直接运行以下命令即可下载并执行安装脚本：
 
@@ -16,7 +16,7 @@
 curl -L https://raw.githubusercontent.com/SeraphinaDawn/123/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
-### 地址二👇
+### 地址二👇Gitee
 
 ```bash
 curl -L https://gitee.com/ActonT/123/raw/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
