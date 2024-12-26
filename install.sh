@@ -130,6 +130,13 @@ show_ufw_usage() {
     echo "3. 启用 UFW 防火墙："
     echo "   sudo ufw enable"
     echo
+    echo "4. 所有操作完成！请运行以下命令使别名生效："
+    echo "   source ~/.bashrc"
+    echo
+    echo "5. 捷命令可用:"
+    echo "   clea：运行系统清理脚本，释放磁盘空间"
+    echo "   ufw：运行防火墙规则管理脚本，一键删除指定规则"
+    echo
     echo "============================================================="
     echo
 }
