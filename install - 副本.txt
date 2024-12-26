@@ -51,17 +51,9 @@ echo "开始系统清理操作..."
 df -h | grep "^/dev"
 before=$(df / | awk 'NR==2 {print $4}')
 
-# 检查系统类型
-if command -v apt-get &> /dev/null; then
-    echo "清理 APT 缓存..."
-    sudo apt-get autoclean -y > /dev/null
-    sudo apt-get clean -y > /dev/null
-elif command -v yum &> /dev/null || command -v dnf &> /dev/null; then
-    echo "清理 YUM/DNF 缓存..."
-    sudo yum clean all > /dev/null 2>&1 || sudo dnf clean all > /dev/null 2>&1
-else
-    echo "未检测到支持的包管理器，跳过缓存清理。"
-fi
+echo "清理 APT 缓存..."
+sudo apt-get autoclean -y > /dev/null
+sudo apt-get clean -y > /dev/null
 
 echo "清理系统日志..."
 log_size=$(sudo du -sh /var/log 2>/dev/null | awk '{print $1}')
@@ -156,34 +148,6 @@ show_ufw_usage() {
     echo
     echo "============================================================="
     echo
-    echo "========================== CentOS注意 =========================="
-    echo "UFW 防火墙配置完成！如果尚未启用，请按照以下步骤操作："
-    echo
-    echo "1. 禁用 firewalld 防火墙："
-    echo "   sudo systemctl stop firewalld"
-    echo "   sudo systemctl disable firewalld"
-    echo
-    echo "4. 启用 UFW 防火墙："
-    echo "   sudo systemctl enable ufw"
-    echo "   sudo systemctl start ufw"
-    echo
-    echo "5. 所有操作完成！请运行以下命令使别名生效："
-    echo "   source ~/.bashrc"
-    echo
-    echo "6. 其余跟上面使用配置一样:"
-    echo
-    echo "============================================================="
-
-}
-
-# 配置别名到 .bashrc
-add_alias() {
-    local name=$1
-    local command=$2
-    if ! grep -q "alias $name=" ~/.bashrc; then
-        echo "alias $name='$command'" >> ~/.bashrc
-        echo "别名 '$name' 已添加！"
-    fi
 }
 
 # 主安装流程
