@@ -37,8 +37,8 @@ install_ufw() {
 
 # 配置别名到 .bashrc
 add_alias() {
-    local name=$1
-    local command=$2
+    local name="$1"
+    local command="$2"
     if ! grep -q "alias $name=" ~/.bashrc; then
         echo "alias $name='$command'" >> ~/.bashrc
         echo -e "${GREEN}别名 '$name' 已添加！${NC}"
@@ -99,7 +99,7 @@ if [[ -z $1 ]]; then
     exit 1
 fi
 
-port_number=$1
+port_number="$1"
 if sudo ufw status | grep -q "\b$port_number\b"; then
     echo "端口 [$port_number] 已放行，无需重复操作。"
 else
@@ -178,7 +178,10 @@ main() {
     create_allow_ufw_port
     create_delete_ufw_rules
 
-    script_dir=$(pwd)
+    # 将当前脚本所在目录存储为变量
+    script_dir="$(pwd)"
+
+    # 添加别名
     add_alias clea "bash $script_dir/cleaner.sh"
     add_alias allow "bash $script_dir/allow_ufw_port.sh"
     add_alias ufw "bash $script_dir/delete_ufw_rules.sh"
@@ -187,4 +190,8 @@ main() {
     show_ufw_usage
 }
 
+# 执行 main 函数
 main
+
+# 在脚本末尾留一个换行，避免某些环境下发生意外 EOF
+echo
