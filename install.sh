@@ -166,7 +166,7 @@ show_ufw_usage() {
     echo -e "${YELLOW}2. 启用 UFW 防火墙：${NC}"
     echo -e "${CYAN}   sudo systemctl enable ufw${NC}"
     echo -e "${CYAN}   sudo systemctl start ufw${NC}"
-    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"" 
+    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"
     echo -e "${BLUE}=============================================================${NC}"
 }
 
