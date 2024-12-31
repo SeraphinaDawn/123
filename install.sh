@@ -1,15 +1,23 @@
 #!/bin/bash
 
+# 定义颜色代码
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # 无颜色
+
 # 检查是否以 root 用户运行
 if [[ $EUID -ne 0 ]]; then
-    echo "请使用 root 用户或通过 sudo 运行此脚本。"
+    echo -e "${RED}请使用 root 用户或通过 sudo 运行此脚本。${NC}"
     exit 1
 fi
 
 # 安装必要工具
 install_ufw() {
     if ! command -v ufw &> /dev/null; then
-        echo "未检测到 ufw 防火墙，正在安装..."
+        echo -e "${YELLOW}未检测到 ufw 防火墙，正在安装...${NC}"
         if command -v apt &> /dev/null; then
             sudo apt update && sudo apt install ufw -y
         elif command -v yum &> /dev/null; then
@@ -18,12 +26,12 @@ install_ufw() {
         elif command -v dnf &> /dev/null; then
             sudo dnf install ufw -y
         else
-            echo "无法安装 ufw，请手动安装后重试。"
+            echo -e "${RED}无法安装 ufw，请手动安装后重试。${NC}"
             exit 1
         fi
-        echo "ufw 安装完成！"
+        echo -e "${GREEN}ufw 安装完成！${NC}"
     else
-        echo "ufw 已安装，无需重复安装。"
+        echo -e "${BLUE}ufw 已安装，无需重复安装。${NC}"
     fi
 }
 
@@ -33,7 +41,7 @@ add_alias() {
     local command=$2
     if ! grep -q "alias $name=" ~/.bashrc; then
         echo "alias $name='$command'" >> ~/.bashrc
-        echo "别名 '$name' 已添加！"
+        echo -e "${GREEN}别名 '$name' 已添加！${NC}"
     fi
 }
 
@@ -51,7 +59,6 @@ echo "开始系统清理操作..."
 df -h | grep "^/dev"
 before=$(df / | awk 'NR==2 {print $4}')
 
-# 检查系统类型
 if command -v apt-get &> /dev/null; then
     echo "清理 APT 缓存..."
     sudo apt-get autoclean -y > /dev/null
@@ -64,24 +71,21 @@ else
 fi
 
 echo "清理系统日志..."
-log_size=$(sudo du -sh /var/log 2>/dev/null | awk '{print $1}')
 sudo journalctl --vacuum-time=7d > /dev/null
 sudo find /var/log -type f -name "*.log" -exec truncate -s 0 {} \;
 
 echo "清理临时文件..."
-temp_size=$(sudo du -sh /tmp 2>/dev/null | awk '{print $1}')
 sudo rm -rf /tmp/*
 sudo rm -rf /var/tmp/*
 
 echo "清理用户缓存..."
-user_cache_size=$(du -sh ~/.cache 2>/dev/null | awk '{print $1}')
 rm -rf ~/.cache/*
 
 echo "清理完成！"
 df -h | grep "^/dev"
 EOF
     chmod +x cleaner.sh
-    echo "cleaner.sh 脚本创建完成！"
+    echo -e "${GREEN}cleaner.sh 脚本创建完成！${NC}"
 }
 
 # 创建 delete_ufw_rules.sh 脚本
@@ -99,109 +103,61 @@ if ! command -v ufw &> /dev/null; then
     exit 1
 fi
 
-# 显示当前的 UFW 规则
 echo "当前的 UFW 规则："
 sudo ufw status numbered
 
-# 提示用户输入需要删除的端口号
-echo
 read -p "请输入要删除的端口号（例如：80）： " port_number
 
-# 检查端口是否存在于 UFW 规则中
 if sudo ufw status numbered | grep -q "\b$port_number\b"; then
     echo "检测到端口 [$port_number] 的规则，正在删除..."
-    
-    # 遍历所有匹配的规则编号并删除
     while sudo ufw status numbered | grep -q "\b$port_number\b"; do
         rule_number=$(sudo ufw status numbered | grep "\b$port_number\b" | awk -F'[][]' '{print $2}' | head -n 1)
-        if [[ -n $rule_number ]]; then
-            echo "正在删除规则编号 [$rule_number]..."
-            sudo ufw delete "$rule_number"
-        else
-            echo "未找到更多规则，停止删除。"
-            break
-        fi
+        sudo ufw delete "$rule_number"
     done
     echo "所有与端口 [$port_number] 相关的规则已删除！"
 else
     echo "未检测到与端口 [$port_number] 相关的规则，无需删除。"
 fi
-
 EOF
     chmod +x delete_ufw_rules.sh
-    echo "delete_ufw_rules.sh 脚本创建完成！"
+    echo -e "${GREEN}delete_ufw_rules.sh 脚本创建完成！${NC}"
 }
 
 # 显示 UFW 配置使用说明
 show_ufw_usage() {
     echo
-    echo "========================== 使用提示 =========================="
-    echo "UFW 防火墙配置完成！如果尚未启用，请按照以下步骤操作："
+    echo -e "${BLUE}========================== 使用提示 ==========================${NC}"
+    echo -e "${GREEN}UFW 防火墙配置完成！如果尚未启用，请按照以下步骤操作：${NC}"
+    echo -e "${YELLOW}1. 默认允许 SSH 端口（22）：${NC} ${CYAN}sudo ufw allow ssh${NC}"
+    echo -e "${YELLOW}2. 如果更改过 SSH 端口，请放行新的端口：${NC} ${CYAN}sudo ufw allow <端口>${NC}"
+    echo -e "${YELLOW}3. 启用 UFW 防火墙：${NC} ${CYAN}sudo ufw enable${NC}"
+    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"
+    echo -e "${BLUE}=============================================================${NC}"
     echo
-    echo "1. 默认允许 SSH 端口（22）："
-    echo "   sudo ufw allow ssh"
-    echo
-    echo "2. 如果更改过 SSH 端口，请放行新的端口（例如 2222）："
-    echo "   sudo ufw allow <你更改的端口>"
-    echo
-    echo "3. 启用 UFW 防火墙："
-    echo "   sudo ufw enable"
-    echo
-    echo "4. 所有操作完成！请运行以下命令使别名生效："
-    echo "   source ~/.bashrc"
-    echo
-    echo "5. 捷命令可用:"
-    echo "   clea：运行系统清理脚本，释放磁盘空间"
-    echo "   ufw：运行防火墙规则管理脚本，一键删除指定规则"
-    echo
-    echo "============================================================="
-    echo
-    echo "========================== CentOS注意 =========================="
-    echo "UFW 防火墙配置完成！如果尚未启用，请按照以下步骤操作："
-    echo
-    echo "1. 禁用 firewalld 防火墙："
-    echo "   sudo systemctl stop firewalld"
-    echo "   sudo systemctl disable firewalld"
-    echo
-    echo "4. 启用 UFW 防火墙："
-    echo "   sudo systemctl enable ufw"
-    echo "   sudo systemctl start ufw"
-    echo
-    echo "5. 所有操作完成！请运行以下命令使别名生效："
-    echo "   source ~/.bashrc"
-    echo
-    echo "6. 其余跟上面使用配置一样:"
-    echo
-    echo "============================================================="
-
-}
-
-# 配置别名到 .bashrc
-add_alias() {
-    local name=$1
-    local command=$2
-    if ! grep -q "alias $name=" ~/.bashrc; then
-        echo "alias $name='$command'" >> ~/.bashrc
-        echo "别名 '$name' 已添加！"
-    fi
+    echo -e "${BLUE}========================== CentOS 注意 ==========================${NC}"
+    echo -e "${GREEN}如果使用 CentOS，请按照以下步骤操作：${NC}"
+    echo -e "${YELLOW}1. 禁用 firewalld 防火墙：${NC}"
+    echo -e "${CYAN}   sudo systemctl stop firewalld${NC}"
+    echo -e "${CYAN}   sudo systemctl disable firewalld${NC}"
+    echo -e "${YELLOW}2. 启用 UFW 防火墙：${NC}"
+    echo -e "${CYAN}   sudo systemctl enable ufw${NC}"
+    echo -e "${CYAN}   sudo systemctl start ufw${NC}"
+    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"
+    echo -e "${BLUE}=============================================================${NC}"
 }
 
 # 主安装流程
 main() {
-    echo "正在安装和配置必要内容..."
+    echo -e "${BLUE}正在安装和配置必要内容...${NC}"
     install_ufw
     create_cleaner
     create_delete_ufw_rules
 
-    echo "配置别名..."
     script_dir=$(pwd)
     add_alias clea "bash $script_dir/cleaner.sh"
     add_alias ufw "bash $script_dir/delete_ufw_rules.sh"
 
-    echo "所有操作完成！请运行以下命令使别名生效："
-    echo "source ~/.bashrc"
-
-    # 显示 UFW 使用提示
+    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"
     show_ufw_usage
 }
 
