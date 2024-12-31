@@ -47,7 +47,7 @@ add_alias() {
 
 # 创建 allow_ufw_port.sh 脚本
 create_allow_ufw_port() {
-    cat << 'EOF' > allow_ufw_port.sh
+    cat << 'EOF' > /usr/local/bin/allow
 #!/bin/bash
 # 检查是否以 root 用户运行
 if [[ $EUID -ne 0 ]]; then
@@ -60,8 +60,12 @@ if ! command -v ufw &> /dev/null; then
     exit 1
 fi
 
-read -p "请输入需要放行的端口号（例如：443）： " port_number
+if [[ -z $1 ]]; then
+    echo "请指定需要放行的端口号，例如：allow 443"
+    exit 1
+fi
 
+port_number=$1
 if sudo ufw status | grep -q "\b$port_number\b"; then
     echo "端口 [$port_number] 已放行，无需重复操作。"
 else
@@ -70,8 +74,8 @@ else
     echo "端口 [$port_number] 已成功放行！"
 fi
 EOF
-    chmod +x allow_ufw_port.sh
-    echo -e "${GREEN}allow_ufw_port.sh 脚本创建完成！${NC}"
+    chmod +x /usr/local/bin/allow
+    echo -e "${GREEN}allow 脚本创建完成，并已放置到 /usr/local/bin 目录中！${NC}"
 }
 
 # 显示 UFW 配置使用说明
@@ -83,7 +87,7 @@ show_ufw_usage() {
     echo -e "${YELLOW}2. 如果更改过 SSH 端口，请放行新的端口：${NC} ${CYAN}sudo ufw allow <端口>${NC}"
     echo -e "${YELLOW}3. 启用 UFW 防火墙：${NC} ${CYAN}sudo ufw enable${NC}"
     echo -e "${YELLOW}4. 使用别名放行端口，例如放行 443 端口：${NC} ${CYAN}allow 443${NC}"
-    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"
+    echo -e "${GREEN}所有操作完成！别名已生效，无需额外操作。${NC}"
     echo -e "${BLUE}=============================================================${NC}"
     echo
     echo -e "${BLUE}========================== CentOS 注意 ==========================${NC}"
@@ -94,7 +98,7 @@ show_ufw_usage() {
     echo -e "${YELLOW}2. 启用 UFW 防火墙：${NC}"
     echo -e "${CYAN}   sudo systemctl enable ufw${NC}"
     echo -e "${CYAN}   sudo systemctl start ufw${NC}"
-    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"
+    echo -e "${GREEN}所有操作完成！别名已生效，无需额外操作。${NC}"
     echo -e "${BLUE}=============================================================${NC}"
 }
 
@@ -103,15 +107,8 @@ main() {
     echo -e "${BLUE}正在安装和配置必要内容...${NC}"
     install_ufw
     create_allow_ufw_port
-    create_cleaner
-    create_delete_ufw_rules
 
-    script_dir=$(pwd)
-    add_alias clea "bash $script_dir/cleaner.sh"
-    add_alias ufw "bash $script_dir/delete_ufw_rules.sh"
-    add_alias allow "bash $script_dir/allow_ufw_port.sh"
-
-    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效：${NC} ${CYAN}source ~/.bashrc${NC}"
+    echo -e "${GREEN}所有操作完成！${NC}"
     show_ufw_usage
 }
 
