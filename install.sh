@@ -87,7 +87,7 @@ show_ufw_usage() {
     echo -e "${YELLOW}2. 如果更改过 SSH 端口，请放行新的端口：${NC} ${CYAN}sudo ufw allow <端口>${NC}"
     echo -e "${YELLOW}3. 启用 UFW 防火墙：${NC} ${CYAN}sudo ufw enable${NC}"
     echo -e "${YELLOW}4. 使用别名放行端口，例如放行 443 端口：${NC} ${CYAN}allow 443${NC}"
-    echo -e "${GREEN}所有操作完成！别名已生效，无需额外操作。${NC}"
+    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效： source ~/.bashrc。${NC}"
     echo -e "${BLUE}=============================================================${NC}"
     echo
     echo -e "${BLUE}========================== CentOS 注意 ==========================${NC}"
@@ -98,7 +98,7 @@ show_ufw_usage() {
     echo -e "${YELLOW}2. 启用 UFW 防火墙：${NC}"
     echo -e "${CYAN}   sudo systemctl enable ufw${NC}"
     echo -e "${CYAN}   sudo systemctl start ufw${NC}"
-    echo -e "${GREEN}所有操作完成！别名已生效，无需额外操作。${NC}"
+    echo -e "${GREEN}所有操作完成！请运行以下命令使别名生效： source ~/.bashrc。${NC}"
     echo -e "${BLUE}=============================================================${NC}"
 }
 
