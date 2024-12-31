@@ -8,7 +8,7 @@
 
 ## 📄 使用方法
 
-### 地址一👇GitHub
+### 地址一👇GitHub[用于国外或能科学上网]
 
 > 直接运行以下命令即可下载并执行安装脚本：
 
@@ -16,7 +16,7 @@
 curl -L https://raw.githubusercontent.com/SeraphinaDawn/123/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
 ```
 
-### 地址二👇Gitee
+### 地址二👇Gitee[用于国内-不能科学上网]
 
 ```bash
 curl -L https://gitee.com/ActonT/123/raw/main/install.sh -o install.sh && chmod +x install.sh && ./install.sh
@@ -27,6 +27,7 @@ curl -L https://gitee.com/ActonT/123/raw/main/install.sh -o install.sh && chmod 
 > **安装完成后，以下快捷命令可用：**
 
 - **clea：运行系统清理脚本，释放磁盘空间。**
+- **allow <要放行的端口号>**: **例如allow 443**,**一键放行端口**。
 
 
 - **ufw：运行防火墙规则管理脚本，一键删除指定规则。**
